@@ -24,6 +24,4 @@ class Task extends Model
         self::PRIORITY_MEDIUM,
         self::PRIORITY_LOW,
     ];
-
-
 }
