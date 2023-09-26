@@ -12,16 +12,28 @@ class Task extends Model
     protected $fillable = [
         'name',
         'priority',
-        'user_id'
+        'status',
+        'user_id',
+        'due_by'
     ];
 
-    public const PRIORITY_HIGH = 'high';
-    public const PRIORITY_MEDIUM = 'medium';
-    public const PRIORITY_LOW = 'low';
+    public const PRIORITY_HIGH = 'High';
+    public const PRIORITY_MEDIUM = 'Medium';
+    public const PRIORITY_LOW = 'Low';
 
     public const PRIORITIES = [
         self::PRIORITY_HIGH,
         self::PRIORITY_MEDIUM,
         self::PRIORITY_LOW,
+    ];
+
+    public const STATUS_NOT_STARTED = 'Not started';
+    public const STATUS_IN_PROGRESS = 'In progress';
+    public const STATUS_COMPLETED = 'Completed';
+
+    public const STATUSES = [
+        self::STATUS_NOT_STARTED,
+        self::STATUS_IN_PROGRESS,
+        self::STATUS_COMPLETED,
     ];
 }

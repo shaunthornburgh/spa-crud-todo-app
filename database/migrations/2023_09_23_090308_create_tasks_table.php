@@ -19,6 +19,12 @@ return new class extends Migration
                 'Medium',
                 'Low'
             ]);
+            $table->enum('status', [
+                'Not started',
+                'In progress',
+                'Completed'
+            ]);
+            $table->date('due_by');
             $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });

@@ -21,7 +21,9 @@ class TaskFactory extends Factory
         return [
             'name' => fake()->sentence,
             'priority' => Task::PRIORITIES[array_rand(Task::PRIORITIES)],
-            'user_id' => User::factory()
+            'status' => Task::STATUSES[array_rand(Task::STATUSES)],
+            'user_id' => User::factory(),
+            'due_by' => fake()->dateTimeBetween('+0 days', '+2 weeks')->format('Y-m-d')
         ];
     }
 }

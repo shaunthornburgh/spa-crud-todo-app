@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Task;
 use App\Models\User;
+use Database\Factories\TaskFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use JsonException;
@@ -14,8 +15,7 @@ class TaskTest extends TestCase
     use RefreshDatabase;
     use WithFaker;
 
-    /** @test
-     */
+    /** @test */
     public function a_user_can_view_their_tasks(): void
     {
         $user = User::factory()->create();
@@ -62,6 +62,8 @@ class TaskTest extends TestCase
             ->put(route('tasks.update', $task->id), [
                 'name' => $updatedName = fake()->sentence,
                 'priority' => $updatedPriority = Task::PRIORITIES[array_rand(Task::PRIORITIES)],
+                'status' => $updatedStatus = Task::STATUSES[array_rand(Task::STATUSES)],
+                'due_by' => fake()->dateTimeBetween('+0 days', '+2 weeks')->format('Y-m-d')
             ]);
 
         $response
@@ -71,7 +73,8 @@ class TaskTest extends TestCase
         $this->assertDatabaseHas('tasks', [
             'id' => $task->id,
             'name' => $updatedName,
-            'priority' => $updatedPriority
+            'priority' => $updatedPriority,
+            'status' => $updatedStatus,
         ]);
     }
 
@@ -173,6 +176,45 @@ class TaskTest extends TestCase
 
         $response
             ->assertSessionHasErrors('priority');
+    }
+
+    /** @test */
+    public function creating_a_task_requires_a_status(): void
+    {
+        $user = User::factory()->create();
+
+        $task = Task::factory()->raw([
+            'user_id' => $user->id,
+            'status' => null
+        ]);
+
+        $response = $this
+            ->actingAs($user)
+            ->post(route('tasks.store'), $task);
+
+        $response
+            ->assertSessionHasErrors('status');
+
+        $this->assertDatabaseMissing('tasks', $task);
+    }
+
+    /** @test */
+    public function updating_a_task_requires_a_status(): void
+    {
+        $user = User::factory()->create();
+
+        $task = Task::factory()->create([
+            'user_id' => $user->id,
+        ]);
+
+        $response = $this
+            ->actingAs($user)
+            ->put(route('tasks.update', $task->id), Task::factory()->raw([
+                    'status' => null
+                ]));
+
+        $response
+            ->assertSessionHasErrors('status');
     }
 
     /** @test */

@@ -25,7 +25,9 @@ class StoreTaskRequest extends FormRequest
     {
         return [
             'name' => 'required|string|min:3|max:255',
-            'priority' => 'required|in:' . implode(',',Task::PRIORITIES)
+            'priority' => 'required|in:' . implode(',',Task::PRIORITIES),
+            'status' => 'required|in:' . implode(',',Task::STATUSES),
+            'due_by' => 'required|after:' . date('Y-m-d')
         ];
     }
 }
